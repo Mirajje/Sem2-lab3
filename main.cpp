@@ -16,5 +16,5 @@ int main()
     TernaryTree<int> tree2;
     tree2.addElem("M", 4);
 
-    std::cout << tree.convertToString() << std::endl;
+    std::cout << tree.convertToString("LMRB") << std::endl;
 }

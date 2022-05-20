@@ -100,8 +100,7 @@ Node<T>& Node<T>::operator= (const Node<T>& other)
 template <class T>
 bool operator==(const Node<T>& lop, const Node<T>& rop)
 {
-    return
-            (lop.m_Value == rop.m_Value)
+    return  (lop.m_Value == rop.m_Value)
             && ((!lop.left && !rop.left) || (lop.left && rop.left && *(lop.left) == *(rop.left)))
             && ((!lop.middle && !rop.middle) || (lop.middle && rop.middle && *(lop.middle) == *(rop.middle)))
             && ((!lop.right && !rop.right) || (lop.right && rop.right && *(lop.right) == *(rop.right)));

@@ -46,6 +46,7 @@ public:
 template <class T> Node<T>* getNode(Node<T>* head, const std::string& path);
 template <class T> void mapRecursion(const std::string& traversal, Node<T>* current, void func(T& value));
 template <class T> void reduceRecursion(const std::string& traversal, Node<T>* current, T* sum, T func(const T& value1, const T& value2));
+template <class T> void convertRecursion(const std::string& traversal, Node<T>* current, std::string* result);
 
 template <class T>
 TernaryTree<T>::TernaryTree(const TernaryTree<T>& other)
