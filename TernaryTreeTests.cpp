@@ -45,7 +45,7 @@ void TernaryTreeTests::findTest()
     tree1.addElem("R", 16);
     assert(tree1.find(16) == "R");
     assert(tree1.find(15) == "");
-
+    assert(tree1.find(1555) == "None");
 }
 
 void TernaryTreeTests::deleteNodeTest()
