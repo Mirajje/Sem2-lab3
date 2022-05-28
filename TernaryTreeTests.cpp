@@ -171,6 +171,32 @@ void TernaryTreeTests::checkForSubTreeTest()
     assert(!(tree1.checkForSubTree(tree2)));
 }
 
+void TernaryTreeTests::convertToStringAndBackTestA()
+{
+    TernaryTree<int> tree1;
+    tree1.addElem("", 148);
+    tree1.addElem("R", 16);
+    tree1.addElem("RR", 16);
+    tree1.addElem("M", 17);
+    tree1.addElem("L", 19);
+
+    assert(convertFromStringA<int>(tree1.convertToStringA("BLMR"), "BLMR") == tree1);
+    assert(convertFromStringA<int>(tree1.convertToStringA("BMLR"), "BMLR") == tree1);
+    assert(!(convertFromStringA<int>(tree1.convertToStringA("BMLR"), "BLMR") == tree1));
+}
+
+void TernaryTreeTests::convertToStringAndBackTestB()
+{
+    TernaryTree<int> tree1;
+    tree1.addElem("", 148);
+    tree1.addElem("R", 16);
+    tree1.addElem("RR", 16);
+    tree1.addElem("M", 17);
+    tree1.addElem("L", 19);
+
+    assert(convertFromStringB<int>(tree1.convertToStringB()) == tree1);
+}
+
 void TernaryTreeTests::allTestsTogether()
 {
     addElemTest();
@@ -185,6 +211,8 @@ void TernaryTreeTests::allTestsTogether()
     deleteNodeTest();
     reduceTest();
     mapTest();
+    convertToStringAndBackTestA();
+    convertToStringAndBackTestB();
 
 }
 

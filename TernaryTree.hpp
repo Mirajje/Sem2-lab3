@@ -1,5 +1,5 @@
-#ifndef LAB3_TERNARYTREE_HPP
-#define LAB3_TERNARYTREE_HPP
+#ifndef LAB3_TERNARYTREE_HPP_1
+#define LAB3_TERNARYTREE_HPP_1
 
 #include "Node.hpp"
 #include <stack>
@@ -9,6 +9,7 @@
 #include <algorithm>
 #include <vector>
 #include <cmath>
+#include <string>
 
 template <class T>
 class TernaryTree
@@ -24,9 +25,10 @@ public:
     TernaryTree(const TernaryTree<T>& other);
     TernaryTree(TernaryTree<T>&& other) noexcept;
     explicit TernaryTree(Node<T>* node);
+    ~TernaryTree();
 
     const T& getElem(const std::string& path) const;
-    void setElem(const T& item, const std::string& path);
+    void setElem(const std::string& path, const T& item);
     int getHeight() const;
     bool exists(const std::string& path) const; // checks if path leads to a Node
 
@@ -36,7 +38,7 @@ public:
     TernaryTree<T>&& getSubTree(const std::string& path) const;
     bool checkForSubTree(const TernaryTree<T>& tree) const;
 
-    std::string&& convertToStringA(std::string traversal = "BLMR") const;
+    std::string&& convertToStringA(std::string traversal = "null") const;
     std::string&& convertToStringB() const;
 
     void addElem(const std::string& path, const T& value = 0); // path - capital letters only
@@ -55,7 +57,23 @@ template <class T> void updateHeight(Node<T>* current, int& maxHeight, int curre
 template <class T> void mapRecursion(const std::string& traversal, Node<T>* current, void func(T& value));
 template <class T> void reduceRecursion(const std::string& traversal, Node<T>* current, T* sum, T func(const T& value1, const T& value2));
 template <class T> void convertToStringRecursionA(const std::string& traversal, Node<T>* current, std::string* result);
+template <class T> void convertToStringRecursionB(Node<T>* current, std::vector<std::string>* result, int64_t coor);
 template <class T> TernaryTree<T>&& convertFromStringA(const std::string& str, const std::string& traversal); // only starting with B are working
+template <class T> TernaryTree<T>&& convertFromStringB(const std::string& str);
+
+static std::string&& indexIntoPath(int64_t index)
+{
+    auto* result = new std::string;
+    while (index > 0)
+    {
+        *result = (index % 3 == 1 ? 'L' : (index % 3 == 2 ? 'M' : 'R')) + *result;
+        if (index % 3 == 0)
+            index = (index - 3) / 3;
+        else
+            index = (index - index % 3) / 3;
+    }
+    return std::move(*result);
+}
 
 template <class T>
 TernaryTree<T>::TernaryTree(const TernaryTree<T>& other)
@@ -73,6 +91,12 @@ template <class T>
 TernaryTree<T>::TernaryTree(Node<T>* node)
 {
     m_Head = node;
+}
+
+template <class T>
+TernaryTree<T>::~TernaryTree()
+{
+    deleteBranch(m_Head);
 }
 
 template <class T>
@@ -145,7 +169,7 @@ int TernaryTree<T>::getHeight() const
 }
 
 template <class T>
-void TernaryTree<T>::setElem(const T& item, const std::string& path)
+void TernaryTree<T>::setElem(const std::string& path, const T& item)
 {
     getNode(m_Head, path)->setValue(item);
 }
@@ -224,9 +248,9 @@ TernaryTree<T>& TernaryTree<T>::operator = (TernaryTree<T>&& other) noexcept
         m_Head = other.m_Head;
         m_Height = other.getHeight();
         other.m_Head = nullptr;
+        heightUpdated = true;
     }
 
-    heightUpdated = true;
     return *this;
 }
 
@@ -279,6 +303,9 @@ std::string&& TernaryTree<T>::convertToStringA(std::string traversal) const
     if (traversal == "null")
         traversal = m_Traversal;
 
+    if (traversal[0] != 'B')
+        throw Errors(Errors::WRONG_TRAVERSAL_INPUT_ERROR);
+
     auto* result = new std::string;
     convertToStringRecursionA(traversal, m_Head, result);
     return std::move(*result);
@@ -307,20 +334,6 @@ TernaryTree<T>&& convertFromStringA(const std::string& str, const std::string& t
     return std::move(*result);
 }
 
-std::string&& indexIntoPath(int64_t index)
-{
-    auto* result = new std::string;
-    while (index > 0)
-    {
-        *result = (index % 3 == 1 ? 'L' : (index % 3 == 2 ? 'M' : 'R')) + *result;
-        if (index % 3 == 0)
-            index = (index - 3) / 3;
-        else
-            index = (index - index % 3) / 3;
-    }
-    return std::move(*result);
-}
-
 template <class T>
 TernaryTree<T>&& convertFromStringB(const std::string& str)
 {
@@ -339,19 +352,19 @@ TernaryTree<T>&& convertFromStringB(const std::string& str)
         }
     }
 
-    auto* result = new TernaryTree<int>;
+    auto* result = new TernaryTree<T>;
     for (int i = 0; i < mas->size(); i++)
     {
         if ((*mas)[i] != "~")
-            result->addElem(indexIntoPath(i), std::stoi((*mas)[i]));
+            result->addElem(indexIntoPath(i), stoElem<T>((*mas)[i]));
     }
-
     return std::move(*result);
 }
 
 template <class T>
 void TernaryTree<T>::addElem(const std::string& path, const T& value)
 {
+    heightUpdated = false;
     if (m_Head == nullptr)
     {
         m_Head = new Node<T>(value);
@@ -371,8 +384,6 @@ void TernaryTree<T>::addElem(const std::string& path, const T& value)
 
     else
         throw Errors(Errors::WRONG_PATH_ERROR);
-
-    heightUpdated = false;
 }
 
 template <class T>

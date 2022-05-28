@@ -6,6 +6,18 @@
 #include <map>
 #include <vector>
 
+template <class T>
+T&& stoElem(const std::string& str) // add for each new type
+{
+    auto* result = new T();
+    if (str.find('.') != std::string::npos)
+        *result =  std::stod(str);
+    else
+        *result = std::stoi(str);
+
+    return std::move(*result);
+}
+
 template <class T> class Node;
 template <class T> bool operator==(const Node<T>& lop, const Node<T>& rop);
 
@@ -56,7 +68,7 @@ Node<T>* convertFromStringNodeA(const std::string& s, const std::string& travers
     {
         if (traversal[i] == 'B')
         {
-            std::string elem = "";
+            std::string elem;
             while (index < s.size() && s[index] != '(' && s[index] != ')')
             {
                 if (s[index] == '~')
@@ -70,7 +82,7 @@ Node<T>* convertFromStringNodeA(const std::string& s, const std::string& travers
                 elem.push_back(s[index]);
                 index++;
             }
-            node->setValue(std::stoi(elem));
+            node->setValue(stoElem<T>(elem));
             while (s[index] == ')')
                 index++;
         }

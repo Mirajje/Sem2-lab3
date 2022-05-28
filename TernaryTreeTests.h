@@ -22,6 +22,8 @@ private:
     static void deleteNodeTest();
     static void reduceTest();
     static void mapTest();
+    static void convertToStringAndBackTestA();
+    static void convertToStringAndBackTestB();
 
 };
 
